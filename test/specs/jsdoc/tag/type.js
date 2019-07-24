@@ -245,6 +245,16 @@ describe('jsdoc/tag/type', () => {
                 expect(info.optional).toBe(true);
                 expect(info.defaultvalue).toBe('hooray');
             });
+
+            it('should parse Typescript JSDoc-style import files', () => {
+              const name = 'pet';
+              const desc = '{import("./a").Pet} SomePet'
+              const info = type.parse( buildText(null, name, desc), true, true);
+
+              expect(info.type[0]).toEqual('Pet');
+              expect(info.text).toBe('SomePet');
+              expect(info.name).toBe('pet');
+            });
         });
 
         // TODO: add more tests related to how JSDoc mangles the Catharsis parse results
