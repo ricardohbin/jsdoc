@@ -1,84 +1,22 @@
-# JSDoc
+# jsdoc-import-typedef
 
-[![Build Status](https://travis-ci.org/jsdoc/jsdoc.svg?branch=master)](http://travis-ci.org/jsdoc/jsdoc)
+This is a fork of [json](https://github.com/jsdoc/jsdoc) to deal with typescript type check import way - https://www.typescriptlang.org/docs/handbook/type-checking-javascript-files.html#import-types
 
-An API documentation generator for JavaScript.
+## Motivation
 
-Want to contribute to JSDoc? Please read `CONTRIBUTING.md`.
+There are some issues in jsdoc related to this problem and a feature is open here: https://github.com/jsdoc/jsdoc/issues/1645. But the feature will be very complex and maybe can take some time to be done. And I need this fix asap.
 
-Installation and Usage
-----------------------
+## Cause
 
-JSDoc supports stable versions of Node.js 8.15.0 and later. You can install
-JSDoc globally or in your project's `node_modules` folder.
+jsdoc uses [catharsis](https://github.com/hegemonic/catharsis) to parse the expressions and `catharsis.parse` doesn't accept the typescript `import` expression (ex: `@param p { import("./a").Pet }`).
 
-To install the latest version on npm globally (might require `sudo`;
-[learn how to fix this](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally)):
+This raises `Invalid type expression` like seem here https://github.com/hegemonic/catharsis/blob/master/bin/parse.js#L48
 
-    npm install -g jsdoc
+Instead of patch catharsis, I apply the fix in jsdoc, using a regexp to remove this pattern before the string is parsed by `catharsis.parse`. 
 
-To install the latest version on npm locally and save it in your package's
-`package.json` file:
+In this case, `@param p { import("./a").Pet }` will be interpreted like `@param p { Pet }` in jsdoc.
 
-    npm install --save-dev jsdoc
-
-**Note**: By default, npm adds your package using the caret operator in front of
-the version number (for example, `^3.6.3`). We recommend using the tilde
-operator instead (for example, `~3.6.3`), which limits updates to the most
-recent patch-level version. See
-[this Stack Overflow answer](https://stackoverflow.com/questions/22343224) for
-more information about the caret and tilde operators.
-
-To install the latest development version locally, without updating your
-project's `package.json` file:
-
-    npm install git+https://github.com/jsdoc/jsdoc.git
-
-If you installed JSDoc locally, the JSDoc command-line tool is available in
-`./node_modules/.bin`. To generate documentation for the file
-`yourJavaScriptFile.js`:
-
-    ./node_modules/.bin/jsdoc yourJavaScriptFile.js
-
-If you installed JSDoc globally, run the `jsdoc` command:
-
-    jsdoc yourJavaScriptFile.js
-
-By default, the generated documentation is saved in a directory named `out`. You
-can use the `--destination` (`-d`) option to specify another directory.
-
-Run `jsdoc --help` for a complete list of command-line options.
-
-## Templates and tools
-
-The JSDoc community has created templates and other tools to help you generate
-and customize your documentation. Here are a few of them:
-
-### Templates
-
-+ [jaguarjs-jsdoc](https://github.com/davidshimjs/jaguarjs-jsdoc)
-+ [DocStrap](https://github.com/docstrap/docstrap)
-([example](https://docstrap.github.io/docstrap))
-+ [jsdoc3Template](https://github.com/DBCDK/jsdoc3Template)
-  ([example](https://github.com/danyg/jsdoc3Template/wiki#wiki-screenshots))
-+ [minami](https://github.com/Nijikokun/minami)
-+ [docdash](https://github.com/clenemt/docdash)
-([example](http://clenemt.github.io/docdash/))
-+ [tui-jsdoc-template](https://github.com/nhnent/tui.jsdoc-template)
-([example](https://nhnent.github.io/tui.jsdoc-template/latest/))
-+ [better-docs](https://github.com/SoftwareBrothers/better-docs)
-([example](https://softwarebrothers.github.io/admin-bro-dev/index.html))
-
-### Build tools
-
-+ [JSDoc Grunt plugin](https://github.com/krampstudio/grunt-jsdoc)
-+ [JSDoc Gulp plugin](https://github.com/mlucool/gulp-jsdoc3)
-
-### Other tools
-
-+ [jsdoc-to-markdown](https://github.com/jsdoc2md/jsdoc-to-markdown)
-+ [Integrating GitBook with
-JSDoc](https://medium.com/@kevinast/integrate-gitbook-jsdoc-974be8df6fb3)
+Works great if you are using Typescript to type check your jsdoc - (https://www.typescriptlang.org/docs/handbook/type-checking-javascript-files.html) and is compatible with all jsdoc templates.
 
 ## For more information
 
