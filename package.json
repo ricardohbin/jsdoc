@@ -1,5 +1,5 @@
 {
-  "name": "jsdoc",
+  "name": "jsdoc-import-typedef",
   "version": "4.0.0-dev",
   "revision": "1563126982480",
   "description": "An API documentation generator for JavaScript.",
